@@ -55,6 +55,11 @@ for (k in 1:nsims) {                      #loop over each simulation...
   lines(Y~cum.time,data=data[[k]],col=k,type='o')  #to plot
 }
 
+## Exercise 1
+# Increasing Y0 to 20 seems to increase the predicability of the epidemic
+# - simulations seem closer together on the plot
+# Increasing the total popultation size to 2000 doesn't seems to increase predictability
+# - but makes the lines less "jitrery"
 
 ###################################################
 ### code chunk number 4: stochastic-simulation.rnw:138-162
@@ -106,7 +111,7 @@ SIR.model <- function (x, params, nstep) {  #function to simulate stochastic SIR
 set.seed(38499583)                #set seed
 nsims <- 10                       #number of simulations
 pop.size <- 100                   #total population size
-Y0 <- 8                           #initial number infected
+Y0 <- 15                           #initial number infected
 X0 <- round(0.9*pop.size)        #initial number suscepitlble (~90% of population)
 nstep <- 1600                     #number of events to simulate
 xstart <- c(time=0,X=X0,Y=Y0,Z=pop.size-X0-Y0) #initial conditions
@@ -123,4 +128,8 @@ for (k in 1:nsims) {              #add multiple epidemics to plot
   lines(Y~cum.time,data=data[[k]],col=k,type='o')
 }
 
+#epidemic lasts longer with highter populations size
+#increases priedictability (the curves are more similar)
+
+#
 
