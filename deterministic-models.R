@@ -5,7 +5,7 @@
 ### code chunk number 1: deterministic-models.rnw:104-105
 ###################################################
 require(deSolve)                          #deSolve library needed for this computing session
-
+library(ggplot2)
 
 ###################################################
 ### code chunk number 2: deterministic-models.rnw:109-124
@@ -31,7 +31,7 @@ sir.model.closed <- function (t, x, params) {    #here we begin a function with 
 ###################################################
 times <- seq(0,120,by=5)                    #function seq returns a sequence
 params <- c(beta=0.3,gamma=0.15)             #function c "c"ombines values into a vector
-xstart <- c(S=8999/10000,I=1/10000,R=1000)     #initial conditions
+xstart <- c(S=8999/10000,I=1/10000,R=1000/10000)     #initial conditions
 
 
 ###################################################
@@ -39,7 +39,10 @@ xstart <- c(S=8999/10000,I=1/10000,R=1000)     #initial conditions
 ###################################################
 out <- as.data.frame(ode(xstart,times,sir.model.closed,params))  #result stored in dataframe
 
-#library(ggplot2)
+###################################################
+### exercise number 1: explore system dynamics at different parameter values
+###################################################
+
 title <- bquote("SIR Model: Closed")
 subtit <- bquote(list(beta==.(params[1]),~gamma==.(params[2]), S==.(xstart[1]), I==.(xstart[2]), R==.(xstart[3])))
 
@@ -110,3 +113,79 @@ par(op)
 ###################################################
 
 xstart2 <- c(S=9999/10000,I=1/10000,R=0)     #initial conditions
+
+###################################################
+### exercise number 3: an open SIR model
+###################################################
+
+sir.model.open <- function (t, x, params) {    #here we begin a function with three arguments
+  S <- x[1]                               #create local variable S, the first element of x
+  I <- x[2]                               #create local variable I
+  R <- x[3]                               #create local variable R
+  with(                                   #we can simplify code using "with"
+    as.list(params),                   #this argument to "with" lets us use the variable names
+    {                                  #the system of rate equations
+      dS <- -beta*S*I + mu*(S+I+R) - mu(S)
+      dI <- beta*S*I-gamma*I - mu(I)
+      dR <- gamma*I - mu(R)
+      dx <- c(dS,dI,dR)                #combine results into a single vector dx
+      list(dx)                         #return result as a list
+    }
+  )
+}
+
+times <- seq(0,120,by=5)                    #function seq returns a sequence
+params <- c(beta=0.3,gamma=0.15, mu = 0.02)             #function c "c"ombines values into a vector
+xstart <- c(S=8999/10000,I=1/10000,R=1000/10000)     #initial conditions
+
+out <- as.data.frame(ode(xstart,times,sir.model.open,params))  #result stored in dataframe
+
+###################################################
+### exercise number 4: an SIER model
+###################################################
+
+seir.model.closed <- function (t, x, params) {    #here we begin a function with three arguments
+  S <- x[1]                               #create local variable S, the first element of x
+  E <- x[2]                               #create local variable I
+  I <- x[3]                               #create local variable R
+  R <- x[4]
+  with(                                   #we can simplify code using "with"
+    as.list(params),                   #this argument to "with" lets us use the variable names
+    {                                  #the system of rate equations
+      dS <- -beta*S*I
+      dE <- beta*S*I-omega*E
+      dI <- omega*E - gamma*I
+      dR <- gamma*I
+      dx <- c(dS,dE,dI,dR)                #combine results into a single vector dx
+      list(dx)                         #return result as a list
+    }
+  )
+}
+
+times <- seq(0,120,by=5)                    #function seq returns a sequence
+params <- c(beta=0.3,gamma=0.15, omega = 0.2)             #function c "c"ombines values into a vector
+xstart <- c(S=8999/10000,E=1/10000,I=0,R=1000/10000)     #initial conditions
+
+out <- as.data.frame(ode(xstart,times,seir.model.closed,params))  #result stored in dataframe
+
+res<-ggplot(out,aes(x=time))+
+  ggtitle(bquote(atop(bold(.(title)),atop(bold(.(subtit))))))+
+  geom_line(aes(y=S,colour="Susceptible"), size =1.25)+
+  geom_line(aes(y=E,colour="Exposed"), size =1.25)+
+  geom_line(aes(y=I,colour="Infected"), size =1.25)+
+  geom_line(aes(y=R,colour="Recovered"), size =1.25)+
+  ylab(label="Proportion")+
+  xlab(label="Time (days)")+
+  theme(legend.justification=c(1,0), legend.position=c(1,0.5))+
+  theme(legend.title=element_text(size=12,face="bold"),
+        legend.background = element_rect(fill='#FFFFFF',
+                                         size=0.5,linetype="solid"),
+        legend.text=element_text(size=10),
+        legend.key=element_rect(colour="#FFFFFF",
+                                fill='#C2C2C2',
+                                size=0.25,
+                                linetype="solid"))+
+  scale_colour_manual("Compartments",
+                      breaks=c("Susceptible","Exposed", "Infected","Recovered"),
+                      values=c("#264b96","yellow","#bf212f","#006f3c"))
+print(res)

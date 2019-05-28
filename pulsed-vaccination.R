@@ -63,7 +63,7 @@ xstart <- out[which(out[,1]==50),2:4]
 ###################################################
 ### code chunk number 6: new-parameters
 ###################################################
-pv <- 0.50625                    # fraction of susceptibles vaccomated
+pv <- 0.02                    # fraction of susceptibles vaccomated
 Tv <- 4                       # number of years between pulses
 vacc.events <- floor(Tmax/Tv) # number of pulses in Tmax years
 
@@ -106,9 +106,14 @@ mtext(side=4, line=2.5, 'Susceptibles')
 
 ##Exercise 1
 
+#Periodicity could be important for disease management strategies. Public health services can be prepared to deal with cases
+#especiially during the "peaks".
+
 ##Exercise 2
 
-# from playing around with the values of pv manually, I estimated the threshold to be 0.5125
+# from playing around with the values of pv manually, I estimated the threshold to be around 0.5125. This was done by... 
+#(starting) at 0.9, going down in steps of 0.1 until 0.6 -> 0.5 made a difference, so tried 5.5, 5.25, 5.125, etc. until 
+#boundary was identified
 
 threshold <- function(pv, mu, Tv, R0) {
    ((mu*Tv-pv)*(exp(mu*Tv)-1)+mu*pv*Tv)/(mu*Tv*(pv-1+exp(mu*Tv))) - 1/R0
@@ -118,7 +123,11 @@ uniroot(threshold, interval = c(0,0.6), mu=mu, Tv=Tv,R0=R0)
 
 #analytically predicted threshold = 0.53. this is pretty close to what I observed on the plot.
 
+##Exercise 4
+#don't know what the green line is or what axis it corresponds to, so not sure how to interpret plot
+#it seems that the crossing of the red and green lines would give us the predicted vaccination threshold below which
+#no epidemics would occur. This would make sense because of the blue line (mean prevalance) dropping dramatically at 
+#around the same time when the lines cross.
 
-
-
+#ran out to time to attempt the other excercises
 
