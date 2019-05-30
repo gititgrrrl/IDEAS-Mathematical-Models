@@ -128,8 +128,7 @@ for (k in 1:nsims) {              #add multiple epidemics to plot
   lines(Y~cum.time,data=data[[k]],col=k,type='o')
 }
 
+## Exercise 2
 #epidemic lasts longer with highter populations size
 #increases priedictability (the curves are more similar)
-
-#
 

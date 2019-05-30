@@ -40,7 +40,7 @@ xstart <- c(S=8999/10000,I=1/10000,R=1000/10000)     #initial conditions
 out <- as.data.frame(ode(xstart,times,sir.model.closed,params))  #result stored in dataframe
 
 ###################################################
-### exercise number 1: explore system dynamics at different parameter values
+### exercise number 1a: explore system dynamics at different parameter values
 ###################################################
 
 title <- bquote("SIR Model: Closed")
@@ -83,7 +83,7 @@ par(op)                                                     #re-set graphical pa
 
 
 ###################################################
-### exercise number 1: explore system dynamics at different parameter values
+### exercise number 1b: explore system dynamics at different parameter values
 ###################################################
 
 params2 <- c(beta=0.5,gamma=1/7)             #larger value of beta
